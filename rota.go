@@ -6,27 +6,20 @@ type Rota struct {
 }
 
 func New(pattern string) *Rota {
-	r := &Rota{
-		Pattern:    pattern,
-		CaptureFns: ParseRotaPattern(pattern),
-	}
-	return r
+	return &Rota{pattern, ParseRotaPattern(pattern)}
 }
 
 // Match checks if the given path matches with the rota.
 func (r *Rota) Match(path string) bool {
-	var rest string
-	var match bool
-
 	for _, cf := range r.CaptureFns {
-		match, rest = cf(path)
+		match, rest := cf(path)
 		if !match {
 			return false
 		}
 		path = rest
 	}
 
-	if rest == "" {
+	if path == "" {
 		return true
 	}
 
